@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Special Gift 💝</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Comic Sans MS', cursive;
+      touch-action: pan-y;
+    }
+
+    .background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      filter: blur(10px) brightness(0.5);
+      z-index: -1;
+      transition: background-image 1s ease;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .photo {
+      max-width: 80%;
+      max-height: 60vh;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #fff;
+      transition: all 0.5s ease;
+    }
+
+    .message {
+      margin-top: 20px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="background" id="background"></div>
+  <div class="container" id="swipeArea">
+    <img id="photo" class="photo" src="" alt="Photo"/>
+    <p id="message" class="message"></p>
+  </div>
+
+  <audio id="bgMusic" autoplay loop>
+    <source src="" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const userData = {
+      "sample 1": {
+        photos: ["Desert.jpg", "Chrysanthemum.jpg", "Hydrangeas.jpg"],
+        messages: [
+          "Hey Sample 1, you're amazing!",
+          "You're doing great, keep going!",
+          "This world is better with you in it 💖"
+        ],
+        music: "Blue 2.0.mp3"
+      },
+      "sample 2": {
+        photos: ["Desert.jpg", "Chrysanthemum.jpg", "Hydrangeas.jpg"],
+        messages: [
+          "Hey Sample 1, you're amazing!",
+          "You're doing great, keep going!",
+          "This world is better with you in it 💖"
+        ],
+        music: "Blue 2.0.mp3"
+      },
+      "sample 3": {
+        photos: ["Desert.jpg", "Chrysanthemum.jpg", "Hydrangeas.jpg"],
+        messages: [
+          "Hey Sample 1, you're amazing!",
+          "You're doing great, keep going!",
+          "This world is better with you in it 💖"
+        ],
+        music: "Blue 2.0.mp3"
+      },
+      "sample 4": {
+        photos: ["Desert.jpg", "Chrysanthemum.jpg", "Hydrangeas.jpg"],
+        messages: [
+          "Hey Sample 1, you're amazing!",
+          "You're doing great, keep going!",
+          "This world is better with you in it 💖"
+        ],
+        music: "Blue 2.0.mp3"
+      },
+      // Add more users here
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name")?.toLowerCase();
+    if (!userData[name]) {
+      alert("Name not recognized. Please try again.");
+      window.location.href = "index.html";
+    }
+
+    const photos = userData[name].photos;
+    const messages = userData[name].messages;
+    const music = userData[name].music;
+
+    let currentIndex = 0;
+    const photoEl = document.getElementById('photo');
+    const messageEl = document.getElementById('message');
+    const backgroundEl = document.getElementById('background');
+    const musicPlayer = document.getElementById('bgMusic');
+
+    function showSlide(index) {
+      photoEl.src = photos[index];
+      messageEl.textContent = messages[index];
+      backgroundEl.style.backgroundImage = `url('${photos[index]}')`;
+    }
+
+    window.onload = () => {
+      showSlide(0);
+      musicPlayer.querySelector('source').src = music;
+      musicPlayer.load();
+      musicPlayer.play().catch(() => {
+        console.log("Autoplay blocked. User interaction required.");
+      });
+    };
+
+    // Swipe & Mouse Drag Handling
+    let startX = 0;
+    let isDragging = false;
+
+    const swipeArea = document.getElementById('swipeArea');
+
+    swipeArea.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+    });
+
+    swipeArea.addEventListener('touchend', (e) => {
+      const endX = e.changedTouches[0].clientX;
+      handleSwipe(endX - startX);
+    });
+
+    swipeArea.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+    });
+
+    swipeArea.addEventListener('mouseup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const endX = e.clientX;
+      handleSwipe(endX - startX);
+    });
+
+    function handleSwipe(deltaX) {
+      if (Math.abs(deltaX) > 50) {
+        if (deltaX < 0) {
+          // Swipe Left – Next
+          currentIndex = (currentIndex + 1) % photos.length;
+        } else {
+          // Swipe Right – Previous
+          currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+        }
+        showSlide(currentIndex);
+      }
+    }
+  </script>
+</body>
+</html>
